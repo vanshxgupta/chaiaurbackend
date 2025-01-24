@@ -11,6 +11,21 @@ dotenv.config({
 //method-2 (db connectionn code kahi aur likha hai aur is wali mai sirf connect krenge usko)
 
 connectDB()
+.then(()=>{
+    const port=process.env.PORT || 8000;
+    app.on('error',(error)=>{
+        console.log("Error in listening the app",error);
+        throw error;
+    })
+    app.listen(port,()=>{
+        console.log(`Server is running at port:${port}`);
+    })
+})
+
+.catch((err)=>{
+    console.log("MONGO db connection failed!!",err);
+})
+
 
 
 //method-1 to connect the db i.e to directly connect t in the index file 
