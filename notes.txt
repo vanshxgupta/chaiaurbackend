@@ -139,8 +139,9 @@
 
 5)For uploading files using multer-
       i)npm install cloudinary
+         npm install multer
       ii)setup the cloudinary in there website 
       iii).env mai cloudinary cloudname, apikey , apisecret daalo cloudinary se laake 
-      iv)cloudinary.js banao in utils folder , ab uske andr cloudinary config karo aur file uploading ka code likho ya copy passte karo
+      iv)cloudinary.js banao in utils folder , ab uske andr cloudinary config karo aur file uploading ka code likho 
        (vo function bhi async hoga becuase uploading a file takes time )
-
+      v)multer middlware in middlewares , where we takes the stoarage lie diskstoarage , destination where  the file to be uploaded and the file name and callback
