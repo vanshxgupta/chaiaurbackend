@@ -145,3 +145,14 @@
       iv)cloudinary.js banao in utils folder , ab uske andr cloudinary config karo aur file uploading ka code likho 
        (vo function bhi async hoga becuase uploading a file takes time )
       v)multer middlware in middlewares , where we takes the stoarage lie diskstoarage , destination where  the file to be uploaded and the file name and callback
+
+
+6)Guide for the controller and router and downloading postman 
+   i)in user.controller.js make the registeruser banao jisme esi hi koi chota sa message send karo
+   ii)in the user.routes.js , write the register route on which the register user function will Works
+   iii)in the app.js ,app.use("/api/v1/users",userRouter), /api/v1/users name is given as to match the industry standard pratices 
+
+   notes-when u have to use different name in the import statement of any other name of the function written in different file , then we do not wrrite default in that function
+   like we have done in the user.controller.js , register user is export {registerUser} , and we have used that in app.js by importing the it as "userRouter" from ....file 
+   ,if we use export deault , then we canot use the different name
+   
