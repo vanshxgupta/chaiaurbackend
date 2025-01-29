@@ -156,7 +156,7 @@
    like we have done in the user.controller.js , register user is export {registerUser} , and we have used that in app.js by importing the it as "userRouter" from ....file 
    ,if we use export deault , then we canot use the different name
    
-7)Registering a user-
+7)Registering a user (in user.controller.js)-
    1.   first the user send the data
    2.   then we have to take the data from body
    2.1,  check if all required fields are available or not 
@@ -175,3 +175,28 @@
     //vii)remove password and refresh token field from response
     //viii)check for user creation
     //ix)return response
+
+
+8)Postman for the Backend
+   i)Bug Handling: Backend development me bugs aana normal hai, dhyan se debug karo.
+
+   ii)Postman Kya Hai: APIs test karne ke liye Postman ka use hota hai, jahan se requests bhej kar server responses check karte ho.
+
+   iii)File Upload:
+
+      Postman ke Body section me form-data select karo.
+      Key me file ya defined name likho.
+      Type File set karke file choose karo.
+      Debugging: Undefined errors, data format aur property issues ko check karo.
+      Auto Cleanup: Temporary storage ka use karo files delete karne ke liye.(cloudinary se file upload hone ke baad unlink krna hai tooh fs.unlinkSync(localFilePath)
+   
+   iv)Postman Setup Steps
+      Download karo aur install karo.
+      New request me GET/POST methods choose karo, URL daalo.
+      Headers aur Body set karo agar zarurat ho.
+      Collection banao jese youtubechai banaya hai aur environment bhi banao jese youtubechai banaya hai
+
+   v)Bug Fixes for Register Controller:
+      Proper request handling ke liye multer aur cleanup logic add karo
+
+

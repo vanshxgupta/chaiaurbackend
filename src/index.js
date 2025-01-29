@@ -6,7 +6,7 @@ import connectDB from "./db/index.js";
 import app from './app.js'
 
 dotenv.config({
-    path:'./env'
+    path:'./.env'
 })
 
 //method-2 (db connectionn code kahi aur likha hai aur is wali mai sirf connect krenge usko)

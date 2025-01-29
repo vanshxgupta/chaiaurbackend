@@ -25,14 +25,14 @@ const registerUser=asyncHandler(async(req,res)=>{
     
 
     //i)destrucution and taking the input details which user submitted in the form or ...
-    const {fullName,email,username,password}=req.body //req.body is the method to take data from the body 
+    const {fullname,email,username,password}=req.body //req.body is the method to take data from the body 
     console.log("email:",email);
 
 
 
     //ii)validation
     if (
-        [fullName, email, username, password].some(
+        [fullname, email, username, password].some(
         //   if fielde exists and after triming it , if any of them is null of undefined the throw error
           (field) => field?.trim() === ""
         )
@@ -45,21 +45,27 @@ const registerUser=asyncHandler(async(req,res)=>{
 
       //iii)check if user already exists:username,email
       //findOne returns the user which already exists and matchs our query(i.e by email,or username or ...) 
-      const existedUser=User.findOne({
+      const existedUser=await User.findOne({
         $or:[{username},{email}]
       })
       
       if(existedUser){
           throw new ApiError(409,"User with email or username already exist")
         }
-        console.log("existedUser",existedUser)
+      console.log("existedUser",existedUser)
 
 
 
     //iv)check for images,check for avatar
         console.log("req.files",req.files);
       const avatarLocalPath=req.files?.avatar[0]?.path ;//path laane ke liye kya kiya hai na ke req.files dekhenge sabse pehle ke vo exist krra hai ya nahi , agar exist krra hai tooh vo file ka first object jo hoga uske path method  lagayenge tooh path aa jayega
-      const coverImageLocalPath=req.files?.coverImage[0]?.path;
+      // const coverImageLocalPath=req.files?.coverImage[0]?.path;
+
+      let coverImageLocalPath;
+      if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+          coverImageLocalPath = req.files.coverImage[0].path;
+      }
+      
 
       if(!avatarLocalPath){
         throw new ApiError(400,"Avatar is required")
@@ -80,14 +86,13 @@ const registerUser=asyncHandler(async(req,res)=>{
 
     //vi)create user object-create entry in db
     const user=await User.create({
-      fullName,
+      fullname,
       avatar:avatar.url,
       coverImage:coverImage?.url||"",
       email,
       password,
       username:username.toLowerCase()
     })
-
 
 
 
