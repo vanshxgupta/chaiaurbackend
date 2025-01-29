@@ -156,3 +156,22 @@
    like we have done in the user.controller.js , register user is export {registerUser} , and we have used that in app.js by importing the it as "userRouter" from ....file 
    ,if we use export deault , then we canot use the different name
    
+7)Registering a user-
+   1.   first the user send the data
+   2.   then we have to take the data from body
+   2.1,  check if all required fields are available or not 
+   3.   then in our regsiteration model we have to find the user if present in it then we return  without registering the user
+   4.   if user not  present we create the user in the database
+   5.   then we sent the message that user created successfully
+
+
+    //Steps-
+    //i)get user details from frontend
+    //ii)validation:not empty
+    //iii)check if user already exists:username,email
+    //iv)check for images,check for avatar
+    //v)upload them to clodinary,avatar
+    //vi)create user object-create entry in db
+    //vii)remove password and refresh token field from response
+    //viii)check for user creation
+    //ix)return response
