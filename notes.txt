@@ -200,3 +200,45 @@
       Proper request handling ke liye multer aur cleanup logic add karo
 
 
+9)Login a User in user.controller.js and route for login in user.routes.js
+
+   Steps:
+    i)req body se data lao
+    ii)username or email  se login karenge
+    iii)find the user(if the given username or email ,exist or not , if exist then procced to next step otherwise ,throw error that user do not exist or we can do that redirect it the register page to register first)
+    iv)password check(check for the password validation by the custom method that we have written in the user.model.js i.e isPasswordcorrect)
+    v)access , refersh token -->to generate this we have written a code in user.controller.js and previously in the user.model also
+    vi)send cookies :
+      ->sets two HTTP-only, secure cookies for accessToken and refreshToken to ensure they are sent only over HTTPS and inaccessible to JavaScript. It then responds with a 200 status, including the user data (excluding password and refresh token) and the generated tokens. Finally, a success message is sent in the response body indicating the user logged in successfully. 
+    
+10)Logout a User in user.controller.js and route for logout in user.routes.js and middleware for getting the user that user is authenicated or not in the auth.middleware.js
+   
+   i)In the auth.middleware.js-
+      i)Use of verifyJWT:
+      The verifyJWT middleware checks if the request has a valid JWT token, ensuring only authenticated users can access protected routes.
+
+      ii)Extracts the token from cookies or Authorization header.
+      iii)Verifies the token using the secret key.
+      iv)Fetches the user from the database and attaches it to req.user.
+
+    
+
+   ii)and then in the user.routes.js-
+      i)the route for the logout 
+      ii) Note:  post mai do argument pe route jaata kese hai ye dekhte hai , /logout karenge tooh sabse pehle tooh vo first  argument pe hi jaayega , tooh vaha chala gaya , 
+    ab verifyJWT middleware ke andr humne likh rkha hai end hi end mai kaam hone ke baad next() , tooh iski vajhe se vo next argument pe jaayega , agar next nahi likhte tooh nahi jaata 
+
+   iii)then in user.controller.js-
+      i)logout method -
+         //user ko dhondo 
+         //aur uski cookies ko delte karo
+      ii) //findbyidandupdate takes 3 things, filter, update, and options
+      iii)return the resonse and delete the cookie by clearCokie
+
+
+
+
+      
+
+
+      

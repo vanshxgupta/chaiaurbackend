@@ -1,8 +1,29 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {ApiError} from '../utils/ApiError.js'
-import {User} from "../models/user.model.js"
+import {User} from "../models/user.model"
 import {uploadonCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
+
+
+
+const generateAccessAndRefereshTokens=async(userId)=>{
+      try {
+        const user=await User.findById(userId)
+        const accessToken=user.generateAccessToken()
+        const refreshToken=user.generateRefreshToken()
+
+        user.refreshToken=refreshToken
+        await user.save({validateBeforeSave:false})
+
+        return {accessToken,refreshToken}
+
+        
+      } catch (error) {
+          throw new ApiError(500,"Something went wrong while generating access or refersh token")
+      }
+}
+
+
 
 const registerUser=asyncHandler(async(req,res)=>{
     //used this for the guide or basic making 
@@ -115,7 +136,121 @@ const registerUser=asyncHandler(async(req,res)=>{
       new ApiResponse(200,createdUser)
     )
 
+
+
+
+
+
+
+
+
+
+
+
 })
 
 
-export {registerUser}
+const loginUser=asyncHandler(async(req,res)=>{
+    // req body se data lao
+    // username or email
+    //find the user
+    //password check
+    //access , refersh token
+    //send cookies 
+
+    const {email,username,password}=req.body
+    if(!(username|| email)){
+      throw new ApiError(400,"Username or email is required")
+    }
+
+    //check for the user , if this username or email user exists or not 
+    const user = await User.findOne({
+      $or:[{username},{email}]
+    })
+
+    //if not exists then throw error , or we can redirect to different page of register 
+    if (!user){
+      throw new ApiError(404,"User does not exist")
+    }
+    
+
+    //NOTE:"User" jo hai vo mongoose ka ek object hai tooh usme apne pass apnne jo generateaccesstoken aur generaterefreshtoken aur ispasswordcorrect banaye the usermodels.js vo available nahi h , ye sab "user" mai avaiable hai jo database mai daala tha aur ab vaha se us user ak instance le rahe hai
+    const isPasswordValid=await user.isPasswordcorrect(password)
+    
+    if (!isPasswordValid){
+      throw new ApiError(401,"Invalid user credientials(Pawword Incorrect")
+    }
+
+    
+    const {accessToken,refreshToken}=await generateAccessAndRefereshTokens(user._id)
+
+    const loggedInUser=await User.findById(user._id).select("-password -refreshToken")
+
+    const options={
+      httpOnly:true,
+      secure:true
+    }
+
+    return res
+    .status(200)
+    .cookie("accessToken",accessToken,options)
+    .cookie("refreshToken",refreshToken,options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user:loggedInUser,accessToken,refreshToken
+        },
+        "User logged in successfully"
+      )
+    )
+
+
+
+})
+
+
+
+const logoutUser=asyncHandler(async(req,res)=>{
+
+    //user ko dhondo 
+    //aur uski cookies ko delte karo
+
+
+  
+  //findbyidandupdate takes 3 things, filter, update, and options
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set:{
+        refreshToken:undefined
+      }
+    },
+    {
+      new:true
+    },
+    //You should set the new option to true to return the document after update was applied.
+
+  )
+
+
+
+
+  const options={
+    httpOnly:true,
+    secure:true,
+
+  }
+
+  return res
+  .status(200)
+  .clearCookie("accessToken",options)
+  .clearCookie("refreshToken",options)
+  .json(new ApiResponse(200,{},"User logged Out"))
+
+
+
+})
+
+
+export {registerUser,loginUser,logoutUser}
