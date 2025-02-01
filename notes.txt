@@ -234,9 +234,25 @@
       iii)return the resonse and delete the cookie by clearCokie
 
 
+11)in user.controller.js ->made the refreshAccessToken Endpoint
+      i)when the access token expires and the user tries to login , the the request while hit this endpoint which refresh the acccess token using the refreshToken
+      ii)we have refresh token , then we will first verify that ,-
+         First Verification (jwt.verify):
+         This step ensures that the incoming refresh token is cryptographically valid, unaltered, and issued by your server. It confirms the token's integrity and decodes the payload to extract user data (e.g., user._id).
 
+      iii)With the decoded token we will get the ._id from its payload and so we can find the user , then we 
+
+         Second Check (incomingRefreshToken !== user.refreshToken):
+         This step ensures that the refresh token provided by the user matches the one stored in the database.
+         This prevents token reuse attacks (where an attacker tries to use an older token).
+         Even if the token is technically valid, it could have been rotated or expired according to your backend logic.
+
+      iv)if we refresh the access and refresh tokens , then there expiry again refreshed , and we will get the new expiries of both , like if access token had expiry of 1d and refresh token had expiry of 10d and on the 5th day it is refreshed then the we will get accessToken life of 1d again , and refresh token lifetime of 10d again , i.e we can use it upto 15th day if we are now on the 5th day 
+
+      v)if both Checks pass , then generate new access annd refresh token , and retrun the response 
 
       
+               
 
 
       

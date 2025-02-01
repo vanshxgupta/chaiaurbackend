@@ -11,9 +11,10 @@ export const verifyJWT=asyncHandler(async(req,_,next)=>{
 
 
     try {
-        console.log("cookies:",req.cookies || req.header("Authorization"));
+        // console.log("cookies:",req.cookies || req.header("Authorization"));
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
-        console.log("token:",token);
+        // console.log("token:",token);
+        
         // This extracts the token either from cookies or from the Authorization header.
         // In the header, the token is typically in the format: Authorization: Bearer <token>.
         //,so if we find Autorization , then replace Bearer with empty string  and we will get the token only 
