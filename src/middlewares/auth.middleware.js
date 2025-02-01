@@ -1,9 +1,9 @@
-import {asyncHandler} from "../utils/asyncHandler"
-import {ApiError} from "../utils/ApiError"
+import {asyncHandler} from "../utils/asyncHandler.js"
+import {ApiError} from "../utils/ApiError.js"
 import jwt from "jsonwebtoken"
-import {User} from '../models/user.model'
+import {User} from '../models/user.model.js'
 
-export const verifyJWT=asyncHandler(async(req,res,next)=>{
+export const verifyJWT=asyncHandler(async(req,_,next)=>{
 
     // Extracts and verifies JWT: Retrieves the token from cookies or headers and verifies it using a secret key.
     // Validates user: Fetches the user from the database, excluding sensitive data, based on the token payload.
@@ -11,7 +11,9 @@ export const verifyJWT=asyncHandler(async(req,res,next)=>{
 
 
     try {
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer", ""); 
+        console.log("cookies:",req.cookies || req.header("Authorization"));
+        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
+        console.log("token:",token);
         // This extracts the token either from cookies or from the Authorization header.
         // In the header, the token is typically in the format: Authorization: Bearer <token>.
         //,so if we find Autorization , then replace Bearer with empty string  and we will get the token only 

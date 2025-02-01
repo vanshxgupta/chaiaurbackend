@@ -133,9 +133,7 @@
 
       vii) we can make our methods in moongose using 
          <schemaname>.methods.<methodname>.....
-
-         (this can done wihtout the async function also ,but in this case i have taken async)
-
+         
 
 5)For uploading files using multer-
       i)npm install cloudinary

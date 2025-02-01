@@ -60,8 +60,8 @@ userSchema.methods.isPasswordcorrect=async function(password){
 
 }
 
-userSchema.methods.generateAccessToken=async function(){
-    const accesstoken=await jwt.sign(
+userSchema.methods.generateAccessToken=function(){
+    const accesstoken=jwt.sign(
         {
             _id:this._id,
             email:this.email,
@@ -77,8 +77,8 @@ userSchema.methods.generateAccessToken=async function(){
     return accesstoken;
 }
 
-userSchema.methods.generateRefreshToken=async function(){
-    const refreshtoken=await jwt.sign(
+userSchema.methods.generateRefreshToken=function(){
+    const refreshtoken=jwt.sign(
         {
             _id:this._id,
         },

@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {ApiError} from '../utils/ApiError.js'
-import {User} from "../models/user.model"
+import {User} from "../models/user.model.js"
 import {uploadonCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -9,10 +9,12 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const generateAccessAndRefereshTokens=async(userId)=>{
       try {
         const user=await User.findById(userId)
-        const accessToken=user.generateAccessToken()
+        const accessToken= user.generateAccessToken()
         const refreshToken=user.generateRefreshToken()
+        // console.log("refresh token:",refreshToken)
 
         user.refreshToken=refreshToken
+        // console.log("userrr:",user)
         await user.save({validateBeforeSave:false})
 
         return {accessToken,refreshToken}
@@ -183,6 +185,8 @@ const loginUser=asyncHandler(async(req,res)=>{
 
     
     const {accessToken,refreshToken}=await generateAccessAndRefereshTokens(user._id)
+    console.log("tokensss:",accessToken,refreshToken);
+    
 
     const loggedInUser=await User.findById(user._id).select("-password -refreshToken")
 
