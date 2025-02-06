@@ -320,7 +320,19 @@
          i.e,router.route("/getUserChannelProfile/:username").get(verifyJWT,getUserChannelProfile)
 
 
+17)In user.controller.js ->getwatchhistory
 
 
-   
+      i)Fetch user watch history from MongoDB using aggregation pipelines.
+      (user mai watch history hai , ab iss watch history array mai bahut saari ids hogi , tooh un ids ko video mai match karna hai $lookup se, fir videos mai owner hoga aur owner apnko vapis user se laana hoga using $lookup, par saari property nahi laana , isliye $project ka use karke kuch kuch laayenge)
+      ii)Handles asynchronous functions with automatic error handling.
 
+      iii)Aggregation Stages:
+            $match: Filters user by _id.
+            $lookup (videos): Joins videos collection with watchHistory.
+            Nested $lookup (users): Joins users collection to fetch video owner details.
+            $project: Selects specific fields (fullName, username, avatar).
+            $addFields: Extracts the first owner record using $first.
+
+      iv)Returns status 200 with user watch history and success message.
+      
