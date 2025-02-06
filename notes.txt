@@ -1,7 +1,7 @@
 
 
 1)Steps for Setting Up a Professional Backend Project:
-
+      npm  init
       i)Initialize Git Repository:
          - Run `git init` to initialize a new Git repository for version control.
 
@@ -41,7 +41,7 @@
             "singleQuote": true,
             "tabWidth": 2
          }
-=
+
 
       ix). Push Code to Remote Repository:  
          - Set the default branch as `main` and link your local repository to a remote one for collaboration.  
@@ -318,6 +318,7 @@
       ix)  router iss case mai thoda alag syntax mai likhte hai -
          i.e,router.route("/path/:parameter").get(middlewareFunction, handlerFunction);
          i.e,router.route("/getUserChannelProfile/:username").get(verifyJWT,getUserChannelProfile)
+
 
 
 
