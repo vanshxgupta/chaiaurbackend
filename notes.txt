@@ -250,6 +250,76 @@
       iv)if we refresh the access and refresh tokens , then there expiry again refreshed , and we will get the new expiries of both , like if access token had expiry of 1d and refresh token had expiry of 10d and on the 5th day it is refreshed then the we will get accessToken life of 1d again , and refresh token lifetime of 10d again , i.e we can use it upto 15th day if we are now on the 5th day 
 
       v)if both Checks pass , then generate new access annd refresh token , and retrun the response 
+      vi)made the route for the refreshToken
 
       
-               
+12)Subscription.model.js->Made Schema for the subscription model in which we have to fields, user who subscribed and whose channel is subscribed
+
+13)Changepassword method in user.controller.js-
+      i)The function gets the old and new passwords from the request and finds the user from the database using their ID.
+      ii)It checks if the old password is correct. If it is, the password is updated with the new one, and saved in the database using .save and in save the {validatebeforesave:false} means
+       the option { validateBeforeSave: false } is passed to skip any schema validations that might otherwise run during the save process. This might be used if validations (like password strength) are being handled elsewhere or if the model has validations that aren't necessary at this point.
+      iii)If the old password is wrong, an error is shown. If everything is fine, a success message is sent back to the user.
+
+14)Update the account details or the avatar or coverimage
+   In user.controller.js:
+      i)updateAccountDetails: Updates user account details like fullname and email., take the fullname and email from the req
+            Ensures both fields are provided, else throws a 400 error.
+            Uses User.findByIdAndUpdate() to update the user data, excluding the password from the returned result.
+
+      ii)updateUserAvatar:
+         Extracts and checks for an uploaded avatar file from the request (req.file?.path).(// This extracts the file path of the uploaded avatar image from the request.)
+         Uploads the avatar to Cloudinary and checks for a successful upload by verifying avatar.url.
+         Updates the user's avatar URL in the database using User.findByIdAndUpdate().
+
+      iii)updateUsercoverImage:
+         Extracts the file path for the cover image (req.file?.path).(// This extracts the file path of the uploaded avatar image from the request.)
+         Uploads the cover image to Cloudinary and checks for upload success via coverImage.url.
+         Updates the user's cover image in the database using User.findByIdAndUpdate().
+
+      iv) aur in sabka routes likhdo user.routes.js mai 
+
+
+15)Subscription model , how to count the subscribers and no. of subscription-
+      i)Use a subscription schema for users and channels.
+      ii)Create a document with channelName and userId when a user subscribes.
+      iii)Count documents matching channelName to get subscriber count.
+      iv)Count documents by userId to find user subscriptions.
+
+
+16) In user.controller.js -> getUserChannelProfile:
+      i) Hume kisi user ke subscribers aur subscriptions ka count nikalna hai, isliye hum aggregation pipeline ka use karenge.
+      ii) URL se hume us channel ka username milega jiske subscribers aur subscriptions hume fetch karne hain.
+      iii) Database me $match ka use karke us user ka profile search karenge jiska username diya gaya hai.
+            $match: Yeh filter lagata hai jisse sirf wahi documents milenge jiska username match kare.
+      iv) Us channel ke subscribers nikalne ke liye:
+            $lookup ka use karenge:
+            from: "subscriptions" — kaunsi collection se data join karna hai
+            localField: "_id" — user ka _id jo hume connect karna hai
+            foreignField: "channel" — jahan yeh user dusron ke liye subscribed hai
+            as: "subscribers" — result ka naam jo array me milega
+      v) User ke subscribed channels nikalne ke liye:
+            Dusra $lookup karenge:
+            from: "subscriptions" — wahi collection
+            localField: "_id" — user ka identifier
+            foreignField: "subscriber" — yeh check karega ki user ne kin channels ko subscribe kiya hai
+            as: "subscribedTo" — result array ka naam
+      vi) Computed fields ko add karenge:
+            $addFields ka use karke kuch extra fields calculate karenge:
+            subscribersCount: $size ka use karke subscribers ka count nikalenge
+            channelSubscribedTocount: $size ka use kar ke subscribedTo ka count
+            isSubscribed: iss ye check karenge ke user subscribed hai ya nahi , us hissab se fronted pe button toggle karana padega, tooh condition lagayenge if ,else ki  $cond se , subscribers.subscriber ke andr dekhenge kya user._id hai (using $in), agar hai , tooh then mai true bhejne , vrna else mai false 
+      vii) Sirf required fields ko select karenge:
+            $project ka use karenge jisme:
+            Sirf fullName, username, subscribersCount, channelSubscribedTocount, isSubscribed, avatar, coverImage, aur email include honge
+      viii) Response return karenge:
+            Agar channel nahi mila to 404 error throw karenge.
+            Agar channel mil gaya to structured response ke sath status code 200 return hoga.
+      ix)  router iss case mai thoda alag syntax mai likhte hai -
+         i.e,router.route("/path/:parameter").get(middlewareFunction, handlerFunction);
+         i.e,router.route("/getUserChannelProfile/:username").get(verifyJWT,getUserChannelProfile)
+
+
+
+   
+
