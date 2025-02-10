@@ -523,7 +523,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     {
       // User ko match kar rahe hain uske _id se
       $match: {
-        _id: new mongoose.Types.ObjectId(req.user._id),
+        _id: new mongoose.Types.ObjectId(req.user._id),//MongoDB requires _id to be of type ObjectId for proper matching. The req.user._id is typically a string when passed from an HTTP request.
       },
     },
     {
