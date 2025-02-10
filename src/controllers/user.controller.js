@@ -517,63 +517,62 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, channel[0], "User channel fetched successfully"));
 });
 
-const getWatchHistory=asyncHandler(async(req,res)=>{
-    const user=await User.aggregate([
-      {
-        $match:{
-          _id:new mongoose.Types.ObjectId(req.user._id)
-        }
+const getWatchHistory = asyncHandler(async (req, res) => {
+  // MongoDB aggregate pipeline start kiya
+  const user = await User.aggregate([
+    {
+      // User ko match kar rahe hain uske _id se
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.user._id),
       },
-      {
-        $lookup:{
-          from:"videos",
-          localField:"watchHistory",
-          foreignField:"_id",
-          as:"watchHistory",
-          pipeline:[
-            {
-              $lookup:{
-                from:"users",
-                localField:"owner",
-                foreignField:"_id",
-                as:"owner",
-                pipeline:[
-                  {
-                    $project:{
-                      fullName:1,
-                      username:1,
-                      avatar:1,    
-                    }
+    },
+    {
+      // Videos collection ke sath lookup kar rahe hain (join jaisa)
+      $lookup: {
+        from: "videos", // videos collection ka naam
+        localField: "watchHistory", // user ka watchHistory field jisme video IDs hain
+        foreignField: "_id", // videos collection ka matching field
+        as: "watchHistory", // output ka naam
+        pipeline: [
+          {
+            // Har video ke owner ka data bhi fetch kar rahe hain
+            $lookup: {
+              from: "users", // users collection
+              localField: "owner", // video ka owner field
+              foreignField: "_id", // users ka _id field
+              as: "owner", // output ke liye naam
+              pipeline: [
+                {
+                  // Owner ka sirf yeh fields chahiye
+                  $project: {
+                    fullName: 1,
+                    username: 1,
+                    avatar: 1,
                   },
-                  {
-                    $addFields:{
-                      owner:{
-                        $first:"$owner"
-                      }
-                    }
-                  }
-                ],
-                
-              }
-            }
+                },
+                {
+                  // Owner ka pehla element lekar object banaya
+                  $addFields: {
+                    owner: { $first: "$owner" },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ]);
 
-          ]
-        }
-
-      }
-    ])
-
-    return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        user[0].watchHistory,
-        "Watch History fetched successfully"
-      )
+  // Response bhej rahe hain aggregated watch history ke sath
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      user[0].watchHistory, // watch history ko response me bhej rahe hain
+      "Watch History fetched successfully" // success message
     )
-})
-
+  );
+});
 
 
 
